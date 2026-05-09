@@ -1,16 +1,42 @@
-# React + Vite
+# HelpDesk Pro 🚀
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O **HelpDesk Pro** é um sistema moderno de gestão de chamados e atendimento ao cliente, construído com as tecnologias mais recentes para garantir velocidade, segurança e uma experiência de usuário premium.
 
-Currently, two official plugins are available:
+## ✨ Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 🔑 **Autenticação Segura**: Gerenciada pelo Supabase Auth.
+- 🛡️ **Níveis de Acesso (RBAC)**: Diferentes permissões para Administradores, Técnicos e Clientes.
+- 📊 **Dashboard Estratégico**: Métricas em tempo real e relatórios de performance.
+- 🔔 **Notificações Real-Time**: Alertas instantâneos sobre mudanças no status dos chamados.
+- 🔍 **Busca Avançada**: Filtros por status, título e usuário.
+- 🎨 **Design Premium**: Interface baseada em Design Systems modernos, responsiva e com modo escuro suave.
+- ⚙️ **Customização Total**: O administrador pode alterar a logomarca, título e central de ajuda diretamente pelo painel.
 
-## React Compiler
+## 🚀 Tecnologias Utilizadas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React.js + Vite
+- **Estilização**: Tailwind CSS + Material Symbols
+- **Backend/Banco**: Supabase (PostgreSQL + Realtime)
+- **Hospedagem**: Vercel
 
-## Expanding the ESLint configuration
+## 🛠️ Configuração de Ambiente
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Para rodar este projeto, você precisará configurar as seguintes variáveis de ambiente no seu arquivo `.env` local ou nas configurações da Vercel:
+
+```env
+VITE_SUPABASE_URL=sua_url_do_supabase
+VITE_SUPABASE_ANON_KEY=sua_chave_anon_do_supabase
+```
+
+## 📦 Como Publicar na Vercel
+
+1. Suba o código para o seu repositório no GitHub.
+2. No painel da Vercel, clique em "Add New Project".
+3. Importe o repositório.
+4. Na seção **Environment Variables**, adicione os dois campos citados acima.
+5. Clique em **Deploy**.
+
+O arquivo `vercel.json` incluído no projeto já garante que as rotas internas funcionem perfeitamente.
+
+---
+Desenvolvido com ❤️ pela equipe HelpDesk Pro.

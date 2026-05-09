@@ -1,26 +1,61 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabaseClient';
 
 export default function NewTicket() {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     subject: '',
-    category: '',
+    category_id: '',
     priority: 'Baixa',
     description: ''
   });
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  async function fetchCategories() {
+    const { data } = await supabase.from('ticket_categories').select('*').order('name');
+    setCategories(data || []);
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aqui seria feita a integração com API. 
-    // Para protótipo, voltamos ao Dashboard ou damos feedback.
-    alert('Chamado aberto com sucesso!');
-    navigate('/');
+    setLoading(true);
+
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    // Buscar o ID do status "Novo"
+    const { data: statusData } = await supabase
+      .from('ticket_status')
+      .select('id')
+      .eq('name', 'Novo')
+      .single();
+
+    const { error } = await supabase.from('tickets').insert([{
+      title: formData.subject,
+      description: formData.description,
+      category_id: formData.category_id,
+      priority: formData.priority,
+      status_id: statusData?.id,
+      created_by: user.id
+    }]);
+
+    if (error) {
+      alert('Erro ao abrir chamado: ' + error.message);
+    } else {
+      alert('Chamado aberto com sucesso!');
+      navigate('/');
+    }
+    setLoading(false);
   };
 
   return (
@@ -59,22 +94,20 @@ export default function NewTicket() {
         {/* Linha com Categoria e Prioridade */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="category" className="block text-label-caps font-label-caps text-on-surface-variant mb-2">Categoria *</label>
+            <label htmlFor="category_id" className="block text-label-caps font-label-caps text-on-surface-variant mb-2">Categoria *</label>
             <div className="relative">
               <select 
-                id="category" 
-                name="category"
+                id="category_id" 
+                name="category_id"
                 required
-                value={formData.category}
+                value={formData.category_id}
                 onChange={handleChange}
                 className="w-full appearance-none bg-surface-container-lowest border border-outline-variant rounded-DEFAULT px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-body-md font-body-md text-on-surface transition-colors"
               >
                 <option value="" disabled>Selecione a categoria</option>
-                <option value="Informática/TI">Informática/TI</option>
-                <option value="Elétrica">Elétrica</option>
-                <option value="Predial/Civil">Predial/Civil</option>
-                <option value="Segurança Eletrônica">Segurança Eletrônica</option>
-                <option value="Telecomunicações">Telecomunicações</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
               </select>
               <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
             </div>
@@ -120,16 +153,18 @@ export default function NewTicket() {
           <button 
             type="button" 
             onClick={() => navigate(-1)}
+            disabled={loading}
             className="px-6 py-2 text-primary font-body-md font-medium rounded-DEFAULT hover:bg-surface-container-low transition-colors"
           >
             Cancelar
           </button>
           <button 
             type="submit" 
-            className="px-6 py-2 bg-primary-container text-on-primary font-body-md font-medium rounded-DEFAULT hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-sm"
+            disabled={loading}
+            className="px-6 py-2 bg-primary-container text-on-primary font-body-md font-medium rounded-DEFAULT hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-[20px]">send</span>
-            Abrir Chamado
+            {loading ? 'Enviando...' : 'Abrir Chamado'}
           </button>
         </div>
 
